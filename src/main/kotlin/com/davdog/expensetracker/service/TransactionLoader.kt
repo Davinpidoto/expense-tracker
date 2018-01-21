@@ -1,5 +1,6 @@
-package com.davdog.expensetracker.csv
+package com.davdog.expensetracker.service
 
+import com.davdog.expensetracker.repository.transaction.Transaction
 import org.apache.commons.csv.CSVFormat
 import java.io.FileReader
 import java.math.BigDecimal
@@ -11,7 +12,7 @@ import org.springframework.core.io.ClassPathResource
 class TransactionLoader {
 
     fun loadTransactions(file: String) : List<Transaction> {
-        val transactions =  ArrayList<Transaction>()
+        val transactions = ArrayList<Transaction>()
         val formatter = DateTimeFormatter.ofPattern("dd MMM yy", Locale.ENGLISH)
         val resource = ClassPathResource(file)
         val records = CSVFormat.RFC4180.parse(FileReader(resource.file))

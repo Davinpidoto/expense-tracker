@@ -11,6 +11,11 @@ import org.springframework.core.io.ClassPathResource
 
 class TransactionLoader {
 
+    val dateIndex = 0
+    val amountIndex = 1
+    val typeIndex = 4
+    val descriptionIndex = 5
+
     fun loadTransactions(file: String) : List<Transaction> {
         val transactions = ArrayList<Transaction>()
         val formatter = DateTimeFormatter.ofPattern("dd MMM yy", Locale.ENGLISH)
@@ -18,7 +23,8 @@ class TransactionLoader {
         val records = CSVFormat.RFC4180.parse(FileReader(resource.file))
 
         records.forEach{
-            transactions.add(Transaction(LocalDate.parse(it[0], formatter), extractAmount(it[1]), it[4], it[5]))
+            transactions.add(Transaction(LocalDate.parse(it[dateIndex], formatter),
+                extractAmount(it[amountIndex]), it[typeIndex], it[descriptionIndex]))
         }
 
         return transactions

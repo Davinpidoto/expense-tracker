@@ -1,7 +1,7 @@
 package com.davdog.expensetracker.repository
 
-import com.davdog.expensetracker.repository.transaction.Transaction
-import com.davdog.expensetracker.repository.transaction.TransactionRepository
+import com.davdog.expensetracker.repository.expense.Expense
+import com.davdog.expensetracker.repository.expense.ExpenseRepository
 import com.davdog.expensetracker.util.TransactionBuilder
 import org.hamcrest.core.Is
 import org.junit.Assert
@@ -13,10 +13,10 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
-class TransactionRepositoryTest {
+class ExpenseRepositoryTest {
 
   @Autowired
-  lateinit var repository: TransactionRepository
+  lateinit var repository: ExpenseRepository
 
   val transactionBuilder = TransactionBuilder()
 
@@ -24,8 +24,8 @@ class TransactionRepositoryTest {
   fun contextLoads() {
     repository.deleteAll()
     repository.save(transactionBuilder.aTransaction().build())
-    val transactions: List<Transaction> = repository.findAll()
-    Assert.assertThat(transactions[0].description, Is.`is`("Telstra Phone Bill"))
+    val expenses: List<Expense> = repository.findAll()
+    Assert.assertThat(expenses[0].description, Is.`is`("Telstra Phone Bill"))
   }
 
 }

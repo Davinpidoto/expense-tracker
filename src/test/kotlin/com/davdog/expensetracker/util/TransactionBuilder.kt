@@ -1,6 +1,6 @@
 package com.davdog.expensetracker.util
 
-import com.davdog.expensetracker.repository.transaction.Transaction
+import com.davdog.expensetracker.repository.expense.Expense
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -12,8 +12,8 @@ class TransactionBuilder {
   private var description = "Telstra Phone Bill"
 
 
-  fun build() : Transaction {
-    return Transaction(transactionDate, amount, type, description)
+  fun build() : Expense {
+    return Expense(transactionDate, amount, type, description)
   }
 
   fun withTransactionDate(transactionDate: LocalDate) : TransactionBuilder {

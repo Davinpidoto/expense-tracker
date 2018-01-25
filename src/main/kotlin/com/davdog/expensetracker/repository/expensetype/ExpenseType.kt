@@ -1,8 +1,9 @@
 package com.davdog.expensetracker.repository.expensetype
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import org.springframework.data.annotation.Id
 import java.util.*
 
-class ExpenseType (@Id val id: String = UUID.randomUUID().toString(),
-                   val type: String)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+class ExpenseType (val type: String, val identifiers: List<String>? = null, @Id val id: String = UUID.randomUUID().toString())
 

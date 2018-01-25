@@ -1,0 +1,20 @@
+spring:
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
+
+csv:
+  dateIndex: 0
+  amountIndex: 1
+  typeIndex: 4
+  descriptionIndex: 5
+
+statement:
+  debit:
+    types:
+      - EFTPOS DEBIT
+      - AUTOMATIC DRAWING
+      - MISCELLANEOUS DEBIT
+      - ATM DEBIT
+      - TRANSFER DEBIT
+      - FEES

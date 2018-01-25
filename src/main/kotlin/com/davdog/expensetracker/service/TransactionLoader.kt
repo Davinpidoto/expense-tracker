@@ -1,14 +1,16 @@
 package com.davdog.expensetracker.service
 
-import com.davdog.expensetracker.repository.transaction.Transaction
+import com.davdog.expensetracker.repository.expense.Expense
 import org.apache.commons.csv.CSVFormat
-import java.io.FileReader
+import org.springframework.stereotype.Component
+import org.springframework.web.multipart.MultipartFile
+import java.io.InputStreamReader
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
-import org.springframework.core.io.ClassPathResource
 
+@Component
 class TransactionLoader {
 
     val dateIndex = 0
@@ -16,18 +18,17 @@ class TransactionLoader {
     val typeIndex = 4
     val descriptionIndex = 5
 
-    fun loadTransactions(file: String) : List<Transaction> {
-        val transactions = ArrayList<Transaction>()
-        val formatter = DateTimeFormatter.ofPattern("dd MMM yy", Locale.ENGLISH)
-        val resource = ClassPathResource(file)
-        val records = CSVFormat.RFC4180.parse(FileReader(resource.file))
+    fun loadTransactions(multipart: MultipartFile) : MutableList<Expense> {
+      val transactions = ArrayList<Expense>()
+      val formatter = DateTimeFormatter.ofPattern("dd MMM yy", Locale.ENGLISH)
+      val records = CSVFormat.RFC4180.parse(InputStreamReader(multipart.inputStream))
 
-        records.forEach{
-            transactions.add(Transaction(LocalDate.parse(it[dateIndex], formatter),
-                extractAmount(it[amountIndex]), it[typeIndex], it[descriptionIndex]))
-        }
+      records.forEach{
+          transactions.add(Expense(LocalDate.parse(it[dateIndex], formatter),
+              extractAmount(it[amountIndex]), it[typeIndex], it[descriptionIndex]))
+      }
 
-        return transactions
+      return transactions
     }
 
     private fun extractAmount(amount: String) : BigDecimal {

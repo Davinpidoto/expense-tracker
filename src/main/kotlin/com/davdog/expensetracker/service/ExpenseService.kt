@@ -6,6 +6,7 @@ import com.davdog.expensetracker.repository.expensetype.ExpenseType
 import com.davdog.expensetracker.repository.expensetype.ExpenseTypeRepository
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.util.*
 import javax.annotation.PostConstruct
 
 @Service
@@ -32,7 +33,6 @@ class ExpenseService(val transactionLoader: TransactionLoader,
 
   fun saveTransactions(file: MultipartFile): List<Expense> {
     val expenses = transactionLoader.loadTransactions(file)
-    val keys = typeMap.keys
     val expenseTypes = expenseTypeRepository.findAll()
     expenses.removeIf{!debitTypes.contains(it.type)}
     expenses.forEach { expense ->
@@ -48,9 +48,8 @@ class ExpenseService(val transactionLoader: TransactionLoader,
   }
 
 
-
-  fun getAllExpenses(): List<Expense> {
-    return expenseRepository.findAll()
+  fun getExpenses(from: Optional<String>, to: Optional<String>): List<Expense> {
+    return expenseRepository.getExpenses(from, to)
   }
 
   fun createMap(): Map<String, ExpenseType> {

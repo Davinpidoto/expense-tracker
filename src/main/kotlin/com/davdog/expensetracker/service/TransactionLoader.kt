@@ -8,31 +8,38 @@ import java.io.InputStreamReader
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.*
 
 @Component
 class TransactionLoader {
 
-    val dateIndex = 0
-    val amountIndex = 1
-    val typeIndex = 4
-    val descriptionIndex = 5
+  val dateIndex = 0
+  val amountIndex = 1
+  val typeIndex = 4
+  val descriptionIndex = 5
 
-    fun loadTransactions(multipart: MultipartFile) : MutableList<Expense> {
-      val transactions = ArrayList<Expense>()
-      val formatter = DateTimeFormatter.ofPattern("dd MMM yy", Locale.ENGLISH)
-      val records = CSVFormat.RFC4180.parse(InputStreamReader(multipart.inputStream))
+  fun loadTransactions(multipart: MultipartFile) : MutableList<Expense> {
+    val transactions = ArrayList<Expense>()
 
-      records.forEach{
-          transactions.add(Expense(LocalDate.parse(it[dateIndex], formatter),
-              extractAmount(it[amountIndex]), it[typeIndex], it[descriptionIndex]))
-      }
+    val records = CSVFormat.RFC4180.parse(InputStreamReader(multipart.inputStream))
 
-      return transactions
+    records.forEach{
+        transactions.add(Expense(extractDate(it[dateIndex]),
+            extractAmount(it[amountIndex]), it[typeIndex], it[descriptionIndex]))
     }
 
-    private fun extractAmount(amount: String) : BigDecimal {
-        return BigDecimal(amount.replace(",",""))
-    }
+    return transactions
+  }
+
+  private fun extractDate(dateString: String) : LocalDate {
+    val pattern : String = if (dateString.contains('-'))  "dd-MMM-yy" else "dd MMM yy"
+    val formatter = DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH)
+    return LocalDate.parse(dateString, formatter)
+  }
+
+  private fun extractAmount(amount: String) : BigDecimal {
+      return BigDecimal(amount.replace(",",""))
+  }
 
 }

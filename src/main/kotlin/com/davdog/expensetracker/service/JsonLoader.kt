@@ -22,7 +22,7 @@ class JsonLoader (val expenseTypeRepository: ExpenseTypeRepository) {
     types.expenseTypes.forEach {
       val expenseTypeFromDb = expenseTypeRepository.findByType(it.type)
       if (expenseTypeFromDb == null) {
-        expenseTypeRepository.save(it)
+        expenseTypeRepository.save(ExpenseType(it.type, it.identifiers, it.id))
       } else {
         expenseTypeRepository.save(ExpenseType(it.type, it.identifiers, expenseTypeFromDb.id))
       }

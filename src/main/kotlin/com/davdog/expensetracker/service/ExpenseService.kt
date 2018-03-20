@@ -19,7 +19,9 @@ class ExpenseService(val transactionLoader: TransactionLoader,
       "MISCELLANEOUS DEBIT",
       "ATM DEBIT",
       "TRANSFER DEBIT",
-      "FEES")
+      "FEES",
+      "CREDIT CARD PURCHASE",
+      "PURCHASE AUTHORISATION")
 
   lateinit var typeMap: Map<String, ExpenseType>
 
@@ -36,7 +38,7 @@ class ExpenseService(val transactionLoader: TransactionLoader,
     expenses.forEach { expense ->
       expenseTypes.forEach { expenseType ->
         expenseType.identifiers?.forEach {
-          if (expense.description.contains(it)) {
+          if (expense.description.toUpperCase().contains(it.toUpperCase())) {
             expense.expenseType = expenseType
           }
         }

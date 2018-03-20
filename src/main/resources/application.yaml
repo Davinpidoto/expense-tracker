@@ -18,3 +18,5 @@ statement:
       - ATM DEBIT
       - TRANSFER DEBIT
       - FEES
+      - CREDIT CARD PURCHASE
+      - PURCHASE AUTHORISATION

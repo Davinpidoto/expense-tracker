@@ -11,16 +11,15 @@ import java.time.LocalDate
 import org.springframework.data.annotation.Id;
 import java.util.*
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-class Expense(@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-                   val transactionDate: LocalDate,
+class Expense(val transactionDate: LocalDate,
               val amount: BigDecimal,
               val type: String,
               val description: String,
-              @Id val id: String = UUID.randomUUID().toString(),
-              var expenseType: ExpenseType? = null) {
+              var expenseType: ExpenseType,
+              @Id val id: String = UUID.randomUUID().toString()) {
 
   fun getExpenseType(): String {
-    return expenseType!!.type
+    return expenseType.type
   }
+
 }

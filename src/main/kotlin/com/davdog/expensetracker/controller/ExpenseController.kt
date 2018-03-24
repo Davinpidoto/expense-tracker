@@ -1,11 +1,12 @@
 package com.davdog.expensetracker.controller
 
+import com.davdog.expensetracker.controller.json.ExpenseResponse
+import com.davdog.expensetracker.controller.json.StatsResponse
 import com.davdog.expensetracker.controller.json.UpdateExpenseRequest
 import com.davdog.expensetracker.repository.expense.Expense
 import com.davdog.expensetracker.service.ExpenseService
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import java.math.BigDecimal
 import java.util.*
 import javax.servlet.http.HttpServletResponse
 import javax.validation.Valid
@@ -15,7 +16,7 @@ import javax.validation.Valid
 class ExpenseController(val expenseService: ExpenseService) {
 
   @GetMapping("/expenses")
-  fun getTenantsReceipts(@RequestParam("from") from: Optional<String>, @RequestParam("to") to: Optional<String>) : List<Expense> {
+  fun getTenantsReceipts(@RequestParam("from") from: Optional<String>, @RequestParam("to") to: Optional<String>) : List<ExpenseResponse> {
     return expenseService.getExpenses(from, to)
   }
 
@@ -30,7 +31,7 @@ class ExpenseController(val expenseService: ExpenseService) {
   }
 
   @GetMapping("/stats")
-  fun getStats(@RequestParam("from") from: Optional<String>, @RequestParam("to") to: Optional<String>)  :MutableMap<String?, BigDecimal> {
+  fun getStats(@RequestParam("from") from: Optional<String>, @RequestParam("to") to: Optional<String>): StatsResponse {
     return expenseService.getStats(from ,to)
   }
 

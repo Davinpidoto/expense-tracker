@@ -4,5 +4,6 @@ import java.util.*
 
 interface ExpenseRepositoryCustom {
 
-  fun getExpenses(from : Optional<String>, to : Optional<String>) : List<Expense>
+  fun getExpenses(from: Optional<String>, to: Optional<String>): List<Expense>
+
 }

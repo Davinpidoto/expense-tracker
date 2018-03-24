@@ -21,6 +21,6 @@ class Expense(@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd
               var expenseType: ExpenseType? = null) {
 
   fun getExpenseType(): String {
-    return if (expenseType != null) expenseType!!.type else "NA"
+    return expenseType!!.type
   }
 }

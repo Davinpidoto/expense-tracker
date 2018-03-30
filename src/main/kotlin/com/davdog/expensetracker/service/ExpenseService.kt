@@ -61,7 +61,7 @@ class ExpenseService(val transactionLoader: TransactionLoader,
 
   fun updateExpense(expenseId: String, request: UpdateExpenseRequest): Expense {
     val expense = expenseRepository.findOne(expenseId)
-    val expenseType = expenseTypeRepository.findOne(request.expenseTypeId)
+    val expenseType = expenseTypeRepository.findByType(request.expenseType)
     return expenseRepository.save(Expense(expense.transactionDate, expense.amount, expense.type, expense.description, expenseType, expense.id))
   }
 
@@ -76,7 +76,7 @@ class ExpenseService(val transactionLoader: TransactionLoader,
   fun getStats(from: Optional<String>, to: Optional<String>): StatsResponse {
     val formattedResponse : MutableMap<String, String> = HashMap()
     getRawStats(from, to).forEach{formattedResponse[it.key]=formatAmount(it.value)}
-    return StatsResponse(to.orElse(""), from.orElse(""), formattedResponse)
+    return StatsResponse(from.orElse(""), to.orElse(""), formattedResponse)
   }
 
   fun getStatsForCsv(from: Optional<String>, to: Optional<String>): ArrayList<String> {

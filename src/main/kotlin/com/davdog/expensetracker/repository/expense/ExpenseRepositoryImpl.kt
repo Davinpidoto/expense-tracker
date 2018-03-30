@@ -9,7 +9,7 @@ import java.util.*
 
 class ExpenseRepositoryImpl (val mongoTemplate: MongoTemplate): ExpenseRepositoryCustom {
 
-  private val formatter = DateTimeFormatter.ofPattern("d/MM/yyyy")
+  private val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
 
   override fun getExpenses(from: Optional<String>, to: Optional<String>) : List<Expense> {
     val query = Query()

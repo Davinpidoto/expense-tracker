@@ -18,8 +18,4 @@ class Expense(val transactionDate: LocalDate,
               var expenseType: ExpenseType,
               @Id val id: String = UUID.randomUUID().toString()) {
 
-  fun getExpenseType(): String {
-    return expenseType.type
-  }
-
 }

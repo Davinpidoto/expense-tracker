@@ -13,6 +13,7 @@ import javax.validation.Valid
 
 
 @RestController
+@CrossOrigin(origins = ["http://localhost:8081"])
 class ExpenseController(val expenseService: ExpenseService) {
 
   @GetMapping("/expenses")

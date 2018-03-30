@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
+@CrossOrigin(origins = ["http://localhost:8081"])
 class ExpenseTypeController(val service: ExpenseTypeService) {
 
   @GetMapping("/types")

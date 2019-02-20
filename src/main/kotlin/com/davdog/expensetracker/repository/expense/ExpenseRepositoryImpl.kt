@@ -30,7 +30,7 @@ class ExpenseRepositoryImpl (val mongoTemplate: MongoTemplate): ExpenseRepositor
       query.addCriteria(Criteria.where("transactionDate").gte(fromDate).lte(toDate))
     }
 
-    return mongoTemplate.find(query, Expense::class.java)
+    return mongoTemplate.find(query, Expense::class.java).sortedBy { it.transactionDate }
   }
 
 }

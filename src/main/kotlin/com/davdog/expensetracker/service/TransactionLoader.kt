@@ -40,7 +40,7 @@ class TransactionLoader(val expenseTypeRepository: ExpenseTypeRepository) {
   }
 
   private fun formatAmount(amount: String) : BigDecimal {
-      return BigDecimal(amount.replace(",","")).abs()
+      return BigDecimal(amount.replace(",","")).multiply(BigDecimal(-1))
   }
 
   private fun formatDescription(description: String): String {

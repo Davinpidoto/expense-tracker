@@ -27,7 +27,8 @@ class ExpenseService(val transactionLoader: TransactionLoader,
       "TRANSFER DEBIT",
       "FEES",
       "CREDIT CARD PURCHASE",
-      "PURCHASE AUTHORISATION")
+      "PURCHASE AUTHORISATION",
+      "INTER-BANK CREDIT")
 
   lateinit var typeMap: Map<String, ExpenseType>
 
@@ -40,6 +41,8 @@ class ExpenseService(val transactionLoader: TransactionLoader,
     val expenses = transactionLoader.loadTransactions(file)
     val expenseTypes = expenseTypeRepository.findAll()
     expenses.removeIf{!debitTypes.contains(it.type)}
+    expenses.removeIf{it.type == "TRANSFER DEBIT" && it.description.contains("Linked Acc Trns")}
+    expenses.removeIf{it.type == "INTER-BANK CREDIT" && !it.description.contains("MCARE")}
     expenses.forEach { expense ->
       expenseTypes.forEach { expenseType ->
         expenseType.identifiers?.forEach {
@@ -52,7 +55,6 @@ class ExpenseService(val transactionLoader: TransactionLoader,
     expenses.removeIf { expenseRepository.findByTransactionDateAndAmountAndDescriptionAndType(it.transactionDate, it.amount, it.description, it.type) != null }
     return expenseRepository.save(expenses)
   }
-
 
   fun getExpenses(from: Optional<String>, to: Optional<String>): List<ExpenseResponse> {
     val expenses = expenseRepository.getExpenses(from, to)

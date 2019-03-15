@@ -53,7 +53,7 @@ class ExpenseService(val transactionLoader: TransactionLoader,
       }
     }
     expenses.removeIf { expenseRepository.findByTransactionDateAndAmountAndDescriptionAndType(it.transactionDate, it.amount, it.description, it.type) != null }
-    return expenseRepository.save(expenses)
+    return expenseRepository.saveAll(expenses)
   }
 
   fun getExpenses(from: Optional<String>, to: Optional<String>): List<ExpenseResponse> {
@@ -62,7 +62,7 @@ class ExpenseService(val transactionLoader: TransactionLoader,
   }
 
   fun updateExpense(expenseId: String, request: UpdateExpenseRequest): Expense {
-    val expense = expenseRepository.findOne(expenseId)
+    val expense = expenseRepository.findById(expenseId).get()
     val expenseType = expenseTypeRepository.findByType(request.expenseType)
     return expenseRepository.save(Expense(expense.transactionDate, expense.amount, expense.type, expense.description, expenseType, expense.id))
   }

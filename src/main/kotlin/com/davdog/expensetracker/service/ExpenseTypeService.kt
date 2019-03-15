@@ -17,7 +17,7 @@ class ExpenseTypeService(private val expenseTypeRepository: ExpenseTypeRepositor
   }
 
   fun delete(id: String) {
-    expenseTypeRepository.delete(id)
+    expenseTypeRepository.delete(expenseTypeRepository.findById(id).get())
   }
 
   fun findAll(): List<ExpenseType> {

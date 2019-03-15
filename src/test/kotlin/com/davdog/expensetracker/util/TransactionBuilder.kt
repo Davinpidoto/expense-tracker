@@ -1,6 +1,7 @@
 package com.davdog.expensetracker.util
 
 import com.davdog.expensetracker.repository.expense.Expense
+import com.davdog.expensetracker.repository.expensetype.ExpenseType
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -13,7 +14,7 @@ class TransactionBuilder {
 
 
   fun build() : Expense {
-    return Expense(transactionDate, amount, type, description)
+    return Expense(transactionDate, amount, type, description, ExpenseType())
   }
 
   fun withTransactionDate(transactionDate: LocalDate) : TransactionBuilder {

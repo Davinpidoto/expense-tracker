@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service
 class ExpenseTypeService(private val expenseTypeRepository: ExpenseTypeRepository) {
 
   fun save(expenseTypeRequest: ExpenseTypeRequest): ExpenseType {
-    return expenseTypeRepository.save(ExpenseType(expenseTypeRequest.type, expenseTypeRequest.identifiers))
+    return expenseTypeRepository.save(ExpenseType(expenseTypeRequest.name, expenseTypeRequest.identifiers))
   }
 
   fun update(id: String, expenseTypeRequest: ExpenseTypeRequest): ExpenseType {
-    return expenseTypeRepository.save(ExpenseType(expenseTypeRequest.type, expenseTypeRequest.identifiers, id))
+    return expenseTypeRepository.save(ExpenseType(expenseTypeRequest.name, expenseTypeRequest.identifiers, id))
   }
 
   fun delete(id: String) {

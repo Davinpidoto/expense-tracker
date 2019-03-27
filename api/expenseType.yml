@@ -1,0 +1,93 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "Expenses API"
+schemes:
+  - "http"
+paths:
+  /types:
+    get:
+      summary: "Retrieve a list of expenses"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Successful Response"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ExpenseType"
+    post:
+      summary: "Create an expense type"
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/definitions/ExpenseTypeRequest"
+      responses:
+        200:
+          description: "Successful Response"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ExpenseType"
+
+  /types/{expenseTypeId}:
+    put:
+      summary: "Update an expense type"
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/parameters/expenseTypeIdPathParam"
+        - $ref: "#/parameters/expenseTypeRequestBody"
+      responses:
+        200:
+          description: "Successful Response"
+          schema:
+            $ref: "#/definitions/ExpenseType"
+
+    delete:
+      summary: "Delete an expense type"
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/parameters/expenseTypeIdPathParam"
+      responses:
+        200:
+          description: "Successful Response"
+
+
+definitions:
+  ExpenseType:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      identifiers:
+        type: array
+        items:
+          type: "string"
+      id:
+        type: "string"
+
+  ExpenseTypeRequest:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      identifiers:
+        type: array
+        items:
+          type: "string"
+
+parameters:
+  expenseTypeIdPathParam:
+    name: expenseTypeId
+    in: path
+    type: string
+    required: true
+  expenseTypeRequestBody:
+    name: "body"
+    in: body
+    schema:
+      $ref: "#/definitions/ExpenseTypeRequest"
+    required: true

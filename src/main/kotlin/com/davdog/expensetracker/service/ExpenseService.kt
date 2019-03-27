@@ -1,7 +1,7 @@
 package com.davdog.expensetracker.service
 
+import com.davdog.expensetracker.config.DebitTypes
 import com.davdog.expensetracker.controller.json.ExpenseResponse
-import com.davdog.expensetracker.controller.json.StatsResponse
 import com.davdog.expensetracker.controller.json.UpdateExpenseRequest
 import com.davdog.expensetracker.repository.expense.Expense
 import com.davdog.expensetracker.repository.expense.ExpenseRepository
@@ -17,18 +17,8 @@ import kotlin.collections.HashMap
 @Service
 class ExpenseService(val transactionLoader: TransactionLoader,
                      val expenseRepository: ExpenseRepository,
-                     val expenseTypeRepository: ExpenseTypeRepository) {
-
-  val debitTypes: MutableList<String> = mutableListOf(
-      "EFTPOS DEBIT",
-      "AUTOMATIC DRAWING",
-      "MISCELLANEOUS DEBIT",
-      "ATM DEBIT",
-      "TRANSFER DEBIT",
-      "FEES",
-      "CREDIT CARD PURCHASE",
-      "PURCHASE AUTHORISATION",
-      "INTER-BANK CREDIT")
+                     val expenseTypeRepository: ExpenseTypeRepository,
+                     val debitTypes: DebitTypes) {
 
   lateinit var typeMap: Map<String, ExpenseType>
 
@@ -39,10 +29,34 @@ class ExpenseService(val transactionLoader: TransactionLoader,
 
   fun saveTransactions(file: MultipartFile): List<Expense> {
     val expenses = transactionLoader.loadTransactions(file)
-    val expenseTypes = expenseTypeRepository.findAll()
-    expenses.removeIf{!debitTypes.contains(it.type)}
+    removeInvalidExpenses(expenses)
+    assignExpenseType(expenses)
+    removeDuplicateExpenses(expenses)
+    return expenseRepository.saveAll(expenses)
+  }
+
+  fun getExpenses(from: Optional<String>, to: Optional<String>): List<ExpenseResponse> {
+    val expenses = expenseRepository.getExpenses(from, to)
+    return expenses.map{
+      ExpenseResponse(it.transactionDate, formatAmount(it.amount), it.description, it.expenseType.name, it.id)
+    }
+  }
+
+  fun updateExpense(expenseId: String, request: UpdateExpenseRequest): Expense {
+    val expense = expenseRepository.findById(expenseId).get()
+    val expenseType = expenseTypeRepository.findByName(request.expenseType)
+    return expenseRepository.save(Expense(expense.transactionDate, expense.amount, expense.type, expense.description, expenseType, expense.id))
+  }
+
+  private fun removeInvalidExpenses(expenses: MutableList<Expense>) {
+    expenses.removeIf{!debitTypes.types.contains(it.type)}
     expenses.removeIf{it.type == "TRANSFER DEBIT" && it.description.contains("Linked Acc Trns")}
     expenses.removeIf{it.type == "INTER-BANK CREDIT" && !it.description.contains("MCARE")}
+  }
+
+  private fun assignExpenseType(expenses: MutableList<Expense>) {
+    val expenseTypes = expenseTypeRepository.findAll()
+
     expenses.forEach { expense ->
       expenseTypes.forEach { expenseType ->
         expenseType.identifiers?.forEach {
@@ -52,56 +66,21 @@ class ExpenseService(val transactionLoader: TransactionLoader,
         }
       }
     }
-    expenses.removeIf { expenseRepository.findByTransactionDateAndAmountAndDescriptionAndType(it.transactionDate, it.amount, it.description, it.type) != null }
-    return expenseRepository.saveAll(expenses)
   }
 
-  fun getExpenses(from: Optional<String>, to: Optional<String>): List<ExpenseResponse> {
-    val expenses = expenseRepository.getExpenses(from, to)
-    return expenses.map { ExpenseResponse(it.transactionDate, formatAmount(it.amount), it.description, it.expenseType.type, it.id) }
+  private fun removeDuplicateExpenses(expenses: MutableList<Expense>) {
+    expenses.removeIf{expenseRepository.findByTransactionDateAndAmountAndDescriptionAndType(
+            it.transactionDate, it.amount, it.description, it.type) != null}
   }
 
-  fun updateExpense(expenseId: String, request: UpdateExpenseRequest): Expense {
-    val expense = expenseRepository.findById(expenseId).get()
-    val expenseType = expenseTypeRepository.findByType(request.expenseType)
-    return expenseRepository.save(Expense(expense.transactionDate, expense.amount, expense.type, expense.description, expenseType, expense.id))
-  }
-
-  fun getRawStats(from: Optional<String>, to: Optional<String>): Map<String, BigDecimal> {
-    val expenses = expenseRepository.getExpenses(from, to)
-    val map : MutableMap<String, BigDecimal> = HashMap()
-    val groups = expenses.groupBy({ it.expenseType.type }, {it})
-    groups.forEach{k, v -> map[k] = v.map{it.amount}.reduce{a, b -> a.plus(b)} }
-    return map
-  }
-
-  fun getStats(from: Optional<String>, to: Optional<String>): StatsResponse {
-    val formattedResponse : MutableMap<String, String> = HashMap()
-    getRawStats(from, to).forEach{formattedResponse[it.key]=formatAmount(it.value)}
-    return StatsResponse(from.orElse(""), to.orElse(""), formattedResponse)
-  }
-
-  fun getStatsForCsv(from: Optional<String>, to: Optional<String>): ArrayList<String> {
-    val rows = ArrayList<String>()
-    rows.add("Category,Amount")
-    rows.add("\n")
-
-    getRawStats(from, to).forEach{
-      rows.add("${it.key},${it.value}")
-      rows.add("\n")
-    }
-    return rows
-  }
-
-  fun formatAmount(amount: BigDecimal) : String {
+  private fun formatAmount(amount: BigDecimal) : String {
     return "$${amount}"
   }
 
-
-  fun createMap(): Map<String, ExpenseType> {
+  private fun createMap(): Map<String, ExpenseType> {
     val typeMap: MutableMap<String, ExpenseType> = HashMap()
     val expenseTypes = expenseTypeRepository.findAll()
-    expenseTypes.forEach{typeMap[it.type]= it}
+    expenseTypes.forEach{typeMap[it.name]= it}
     return typeMap
   }
 

@@ -5,5 +5,5 @@ import org.springframework.data.annotation.Id
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class ExpenseType (val type: String = "", val identifiers: List<String>? = null, @Id val id: String = UUID.randomUUID().toString())
+class ExpenseType (val name: String = "", val identifiers: List<String>? = null, @Id val id: String = UUID.randomUUID().toString())
 

@@ -4,6 +4,6 @@ import org.springframework.data.mongodb.repository.MongoRepository
 
 interface ExpenseTypeRepository: MongoRepository<ExpenseType, String> {
 
-  fun findByType(type: String): ExpenseType
+  fun findByName(type: String): ExpenseType
 
 }

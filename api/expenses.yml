@@ -1,0 +1,127 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "Expenses API"
+schemes:
+  - "http"
+paths:
+  /expenses:
+    get:
+      summary: "Retrieve a list of expenses"
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/parameters/fromDateQueryParam"
+        - $ref: "#/parameters/toDateQueryParam"
+      responses:
+        200:
+          description: "Successful Response"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Expense"
+
+  /expenses/{expenseId}:
+    patch:
+      summary: "Update expense"
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/parameters/expenseIdPathParam"
+      responses:
+        200:
+          description: "Successful Response"
+          schema:
+            $ref: "#/definitions/Expense"
+
+  /stats:
+    get:
+      summary: "Retrieve a list of expenses"
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/parameters/fromDateQueryParam"
+        - $ref: "#/parameters/toDateQueryParam"
+      responses:
+        200:
+          description: "Successful Response"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Stats"
+
+  /csv:
+    get:
+      summary: "Retrieve stats as csv file"
+      produces:
+        - "application/octet-stream"
+      parameters:
+        - $ref: "#/parameters/fromDateQueryParam"
+        - $ref: "#/parameters/toDateQueryParam"
+      responses:
+        200:
+          description: "Successful Response"
+          schema:
+            type: file
+
+    post:
+      summary: "Upload transactions as csv"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Successful Response"
+
+definitions:
+  Expense:
+    type: "object"
+    properties:
+      transactionDate:
+        type: "string"
+      amount:
+        type: "string"
+      description:
+        type: "string"
+      expenseType:
+        type: "string"
+      id:
+        type: "string"
+
+  Stats:
+    type: "object"
+    properties:
+      from:
+        type: "string"
+      to:
+        type: "string"
+      stats:
+        type: array
+        items:
+          $ref: "#/definitions/KeyValuePair"
+
+  KeyValuePair:
+    type: "object"
+    properties:
+      key:
+        type: "string"
+      value:
+        type: "string"
+
+parameters:
+  fromDateQueryParam:
+    name: "from"
+    in: "query"
+    description: "The from date in format dd/mm/yyyy"
+    required: false
+    type: "string"
+  toDateQueryParam:
+    name: "to"
+    in: "query"
+    description: "The to date in format dd/mm/yyyy"
+    required: false
+    type: "string"
+  expenseIdPathParam:
+    name: expenseId
+    in: path
+    type: string
+    required: true

@@ -3,6 +3,7 @@ package com.davdog.expensetracker.service
 import com.davdog.expensetracker.repository.expense.Expense
 import com.davdog.expensetracker.repository.expensetype.ExpenseTypeRepository
 import org.apache.commons.csv.CSVFormat
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
 import java.io.InputStreamReader
@@ -12,22 +13,22 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Component
+@ConfigurationProperties(prefix = "csv")
 class TransactionLoader(val expenseTypeRepository: ExpenseTypeRepository) {
 
-  val dateIndex = 0
-  val amountIndex = 1
-  val typeIndex = 4
-  val descriptionIndex = 5
-
+  lateinit var dateIndex: String
+  lateinit var amountIndex: String
+  lateinit var typeIndex: String
+  lateinit var descriptionIndex: String
 
   fun loadTransactions(multipart: MultipartFile) : MutableList<Expense> {
-    val defaultExpenseType = expenseTypeRepository.findByType("NA")
+    val defaultExpenseType = expenseTypeRepository.findByName("NA")
     val transactions = ArrayList<Expense>()
     val records = CSVFormat.RFC4180.parse(InputStreamReader(multipart.inputStream))
 
     records.forEach{
-        transactions.add(Expense(extractDate(it[dateIndex]),
-            formatAmount(it[amountIndex]), it[typeIndex], formatDescription(it[descriptionIndex]), defaultExpenseType))
+        transactions.add(Expense(extractDate(it[dateIndex.toInt()]),
+            formatAmount(it[amountIndex.toInt()]), it[typeIndex.toInt()], formatDescription(it[descriptionIndex.toInt()]), defaultExpenseType))
     }
 
     return transactions

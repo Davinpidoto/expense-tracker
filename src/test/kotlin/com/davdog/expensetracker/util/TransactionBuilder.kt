@@ -5,16 +5,21 @@ import com.davdog.expensetracker.repository.expensetype.ExpenseType
 import java.math.BigDecimal
 import java.time.LocalDate
 
+fun aTransaction() : TransactionBuilder {
+  return TransactionBuilder()
+}
+
 class TransactionBuilder {
 
   private var transactionDate: LocalDate = LocalDate.now()
   private var amount = BigDecimal(100)
-  private var type = "MISCELLANEOUS DEBIT"
+  private var transactionType = "MISCELLANEOUS DEBIT"
   private var description = "Telstra Phone Bill"
+  private var expenseType = "Phone"
 
 
   fun build() : Expense {
-    return Expense(transactionDate, amount, type, description, ExpenseType())
+    return Expense(transactionDate, amount, transactionType, description, ExpenseType(expenseType))
   }
 
   fun withTransactionDate(transactionDate: LocalDate) : TransactionBuilder {
@@ -27,8 +32,13 @@ class TransactionBuilder {
     return this
   }
 
-  fun withType(type: String) : TransactionBuilder {
-    this.type = type
+  fun withTransactionType(transactionType: String) : TransactionBuilder {
+    this.transactionType = transactionType
+    return this
+  }
+
+  fun withExpenseType(expenseType: String) : TransactionBuilder {
+    this.expenseType = expenseType
     return this
   }
 
@@ -37,8 +47,6 @@ class TransactionBuilder {
     return this
   }
 
-  fun aTransaction() : TransactionBuilder {
-    return TransactionBuilder()
-  }
+
 
 }

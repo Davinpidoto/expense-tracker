@@ -12,7 +12,7 @@ class ExpenseTypeController(val service: ExpenseTypeService) {
 
   @GetMapping("/types")
   fun getTypes(): List<ExpenseType> {
-    return service.findAll().sortedBy { it.type }
+    return service.findAll().sortedBy { it.name }
   }
 
   @PostMapping("/types")
